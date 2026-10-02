@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>I Can Find it at School! - KG1 Unit 2 Adventure</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Fredoka & Grandstander for fun preschool aesthetics -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Grandstander:wght@600;800&family=Noto+Sans+Arabic:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Fredoka', 'Noto Sans Arabic', sans-serif;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .fun-title {
+      font-family: 'Grandstander', cursive;
+    }
+    .bounce-hover:hover {
+      transform: translateY(-4px) scale(1.02);
+    }
+    .bounce-hover:active {
+      transform: translateY(2px) scale(0.97);
+    }
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-7px) rotate(2deg); }
+    }
+    .floating-anim {
+      animation: floaty 3s ease-in-out infinite;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.6); opacity: 0; }
+      70% { transform: scale(1.08); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .pop-in {
+      animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    @keyframes confettiFall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(550px) rotate(720deg); opacity: 0; }
+    }
+    .confetti-piece {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      animation: confettiFall 2.2s linear forwards;
+    }
+  </style>
+</head>
+<body class="bg-amber-50 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-amber-300">
+
+  <header class="bg-gradient-to-r from-sky-400 via-indigo-400 to-purple-400 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-2 sm:py-3 flex items-center justify-between">
+      
+      <!-- Logo & Home button -->
+      <button onclick="goToScreen('home')" class="flex items-center gap-2 group text-left">
+        <span class="text-3xl sm:text-4xl filter drop-shadow">🏫</span>
+        <div>
+          <h1 class="fun-title text-xl sm:text-2xl font-bold tracking-wide drop-shadow-sm flex items-center gap-2">
+            School Fun! <span class="bg-yellow-300 text-yellow-900 text-xs px-2 py-0.5 rounded-full uppercase tracking-wider font-extrabold">KG1 Unit 2</span>
+          </h1>
+          <p class="text-xs text-sky-100 hidden sm:block">I Can Find it at School! • أستطيع أن أجده في المدرسة</p>
+        </div>
+      </button>
+
+      <!-- Global Audio & Helpers -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Bilingual Helper Toggle -->
+        <button id="langToggleBtn" onclick="toggleArabicHelp()" class="bg-white/20 hover:bg-white/30 text-white px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition bounce-hover border border-white/30">
+          <span>🌍</span>
+          <span id="langToggleText">AR Help: ON</span>
+        </button>
+
+        <!-- Natural Voice Selector (High-Fidelity Human Voice) -->
+        <div class="relative hidden sm:flex items-center bg-white/20 hover:bg-white/30 text-white rounded-xl px-2 py-1 border border-white/30 text-xs">
+          <span class="mr-1">🎙️</span>
+          <select id="voiceSelect" onchange="changeVoiceSelection(this.value)" class="bg-transparent text-white font-bold text-xs focus:outline-none cursor-pointer max-w-[130px] truncate">
+            <option value="" class="text-slate-800">Natural Voice</option>
+          </select>
+          <button onclick="testTeacherVoice()" title="Test Teacher Voice" class="ml-1 px-1.5 py-0.5 bg-yellow-300 text-yellow-900 rounded font-black hover:bg-yellow-200">Hear 🗣️</button>
+        </div>
+
+        <!-- Sound Audio FX toggle -->
+        <button id="soundToggleBtn" onclick="toggleMute()" class="w-10 h-10 bg-yellow-400 text-yellow-900 rounded-full flex items-center justify-center font-bold text-lg shadow-md transition bounce-hover">
+          <span id="soundIcon">🔊</span>
+        </button>
+
+        <!-- Stars Counter -->
+        <div class="bg-amber-400/90 text-amber-950 font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-inner">
+          <span class="text-xl">⭐</span>
+          <span id="starCounter" class="text-base sm:text-lg">0</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-6xl w-full mx-auto p-3 sm:p-5 flex flex-col justify-center">
+
+    <!-- ======================================================== -->
+    <!-- SCREEN 1: HOME DASHBOARD / ADVENTURE MAP -->
+    <!-- ======================================================== -->
+    <section id="screen-home" class="screen-view active flex flex-col items-center">
+      
+      <!-- Welcome Banner -->
+      <div class="w-full bg-gradient-to-r from-teal-400 to-sky-400 rounded-3xl p-5 sm:p-7 text-white text-center shadow-lg relative overflow-hidden mb-6">
+        <div class="absolute -top-8 -right-8 w-32 h-32 bg-white/10 rounded-full pointer-events-none"></div>
+        <div class="absolute -bottom-10 -left-6 w-36 h-36 bg-white/10 rounded-full pointer-events-none"></div>
+        
+        <span class="inline-block text-4xl mb-2 floating-anim">🎒 ✏️ 📚</span>
+        <h2 class="fun-title text-2xl sm:text-4xl font-extrabold mb-2 drop-shadow">Welcome to School Adventure!</h2>
+        <p class="text-sky-100 text-base sm:text-lg max-w-xl mx-auto">
+          Tap a game to explore the classroom, learn letter sounds (S, A, N), count to 2, and test your skills!
+        </p>
+        <p class="arabic-helper text-xs sm:text-sm text-yellow-200 mt-1 font-semibold">مرحباً بك في مدرسة كي جي ١! اختر لعبة واستمتع بالتعلم</p>
+      </div>
+
+      <!-- Game Cards Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+
+        <!-- Card 1: School & Playground Explorer -->
+        <button onclick="startExplorerGame()" class="group bg-white rounded-3xl p-5 text-left border-4 border-emerald-300 hover:border-emerald-500 shadow-md transition bounce-hover flex items-center gap-4 relative overflow-hidden">
+          <div class="w-16 h-16 rounded-2xl bg-emerald-100 flex items-center justify-center text-4xl shrink-0 group-hover:scale-110 transition">
+            🏫
+          </div>
+          <div>
+            <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Lesson 1 Words</span>
+            <h3 class="font-bold text-lg sm:text-xl text-slate-800">School Explorer</h3>
+            <p class="text-xs text-slate-500">Tap objects in Class & Playground</p>
+            <p class="arabic-helper text-xs text-emerald-700 mt-0.5">استكشف الفصل والملعب</p>
+          </div>
+          <span class="absolute right-3 top-3 text-emerald-400 text-xs font-bold bg-emerald-50 px-2 py-0.5 rounded-full">12 Words</span>
+        </button>
+
+        <!-- Card 2: Speaking Quest: "What can you see?" -->
+        <button onclick="startMysteryGame()" class="group bg-white rounded-3xl p-5 text-left border-4 border-amber-300 hover:border-amber-500 shadow-md transition bounce-hover flex items-center gap-4 relative overflow-hidden">
+          <div class="w-16 h-16 rounded-2xl bg-amber-100 flex items-center justify-center text-4xl shrink-0 group-hover:scale-110 transition">
+            🔍
+          </div>
+          <div>
+            <span class="text-xs font-bold text-amber-600 uppercase tracking-wider">Speaking Focus</span>
+            <h3 class="font-bold text-lg sm:text-xl text-slate-800">"What Can You See?"</h3>
+            <p class="text-xs text-slate-500">Listen, find & answer like Selim!</p>
+            <p class="arabic-helper text-xs text-amber-700 mt-0.5">ماذا ترى في الفصل والملعب؟</p>
+          </div>
+          <span class="absolute right-3 top-3 text-amber-500 text-xs font-bold bg-amber-50 px-2 py-0.5 rounded-full">Quest</span>
+        </button>
+
+        <!-- Card 3: Phonics Pop (Ss, Aa, Nn) -->
+        <button onclick="startPhonicsGame()" class="group bg-white rounded-3xl p-5 text-left border-4 border-pink-300 hover:border-pink-500 shadow-md transition bounce-hover flex items-center gap-4 relative overflow-hidden">
+          <div class="w-16 h-16 rounded-2xl bg-pink-100 flex items-center justify-center text-4xl shrink-0 group-hover:scale-110 transition">
+            🎈
+          </div>
+          <div>
+            <span class="text-xs font-bold text-pink-600 uppercase tracking-wider">Lesson 2 Phonics</span>
+            <h3 class="font-bold text-lg sm:text-xl text-slate-800">Phonics Pop!</h3>
+            <p class="text-xs text-slate-500">Letter sounds: S, A, and N</p>
+            <p class="arabic-helper text-xs text-pink-700 mt-0.5">أصوات الحروف: س، أ، ن</p>
+          </div>
+          <span class="absolute right-3 top-3 text-pink-500 text-xs font-bold bg-pink-50 px-2 py-0.5 rounded-full">Ss • Aa • Nn</span>
+        </button>
+
+        <!-- Card 4: Math: Number 2 & Blue Square -->
+        <button onclick="startMathGame()" class="group bg-white rounded-3xl p-5 text-left border-4 border-blue-300 hover:border-blue-500 shadow-md transition bounce-hover flex items-center gap-4 relative overflow-hidden">
+          <div class="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center text-4xl shrink-0 group-hover:scale-110 transition">
+            🟦
+          </div>
+          <div>
+            <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Math & Shapes</span>
+            <h3 class="font-bold text-lg sm:text-xl text-slate-800">Number 2 & Blue Square</h3>
+            <p class="text-xs text-slate-500">Count 1 & 2 chairs, pencils & shapes</p>
+            <p class="arabic-helper text-xs text-blue-700 mt-0.5">الرقم ٢ والمربع الأزرق</p>
+          </div>
+          <span class="absolute right-3 top-3 text-blue-500 text-xs font-bold bg-blue-50 px-2 py-0.5 rounded-full">2 & Square</span>
+        </button>
+
+        <!-- Card 5: Story Time: Look Around the Classroom! -->
+        <button onclick="startStoryGame()" class="group bg-white rounded-3xl p-5 text-left border-4 border-violet-300 hover:border-violet-500 shadow-md transition bounce-hover flex items-center gap-4 relative overflow-hidden">
+          <div class="w-16 h-16 rounded-2xl bg-violet-100 flex items-center justify-center text-4xl shrink-0 group-hover:scale-110 transition">
+            📖
+          </div>
+          <div>
+            <span class="text-xs font-bold text-violet-600 uppercase tracking-wider">Lesson 3 Story</span>
+            <h3 class="font-bold text-lg sm:text-xl text-slate-800">Classroom Story</h3>
+            <p class="text-xs text-slate-500">Color the flower & erase mistakes!</p>
+            <p class="arabic-helper text-xs text-violet-700 mt-0.5">قصة: انظر حول الفصل الدراسي</p>
+          </div>
+          <span class="absolute right-3 top-3 text-violet-500 text-xs font-bold bg-violet-50 px-2 py-0.5 rounded-full">Interactive</span>
+        </button>
+
+        <!-- Card 6: Super School Quiz (Unit 2 Assessment) -->
+        <button onclick="startQuizGame()" class="group bg-gradient-to-br from-amber-100 to-yellow-50 rounded-3xl p-5 text-left border-4 border-amber-400 hover:border-amber-500 shadow-md transition bounce-hover flex items-center gap-4 relative overflow-hidden">
+          <div class="w-16 h-16 rounded-2xl bg-amber-400 text-amber-950 flex items-center justify-center text-4xl shrink-0 group-hover:scale-110 transition shadow">
+            🏆
+          </div>
+          <div>
+            <span class="text-xs font-black text-amber-700 uppercase tracking-wider">Unit 2 Assessment</span>
+            <h3 class="font-bold text-lg sm:text-xl text-amber-950">Super School Quiz!</h3>
+            <p class="text-xs text-amber-800">Test vocabulary, phonics & math</p>
+            <p class="arabic-helper text-xs text-amber-800 mt-0.5">اختبار وتقييم الوحدة الثانية</p>
+          </div>
+          <span class="absolute right-3 top-3 text-amber-700 text-xs font-black bg-amber-200 px-2 py-0.5 rounded-full">Challenge</span>
+        </button>
+
+        <!-- Card 7: Sticker Playground Reward Canvas -->
+        <button onclick="startStickerGame()" class="group bg-white rounded-3xl p-5 text-left border-4 border-rose-300 hover:border-rose-500 shadow-md transition bounce-hover flex items-center gap-4 relative overflow-hidden sm:col-span-2 lg:col-span-3">
+          <div class="w-16 h-16 rounded-2xl bg-rose-100 flex items-center justify-center text-4xl shrink-0 group-hover:scale-110 transition">
+            🎪
+          </div>
+          <div>
+            <span class="text-xs font-bold text-rose-600 uppercase tracking-wider">Playground Reward</span>
+            <h3 class="font-bold text-lg sm:text-xl text-slate-800">My School Stickers</h3>
+            <p class="text-xs text-slate-500">Stamp your earned star prizes on the school playground</p>
+            <p class="arabic-helper text-xs text-rose-700 mt-0.5">لوحة ملصقاتي وجوائزي</p>
+          </div>
+          <span class="absolute right-3 top-3 text-rose-500 text-xs font-bold bg-rose-50 px-2 py-0.5 rounded-full">Free Play</span>
+        </button>
+
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SCREEN 2: SCHOOL & PLAYGROUND EXPLORER (LESSON 1) -->
+    <!-- ======================================================== -->
+    <section id="screen-explorer" class="screen-view hidden flex-col">
+      <!-- Section Nav -->
+      <div class="flex items-center justify-between mb-4">
+        <button onclick="goToScreen('home')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 rounded-2xl font-bold text-sm flex items-center gap-1 bounce-hover">
+          ⬅ Back
+        </button>
+        <div class="text-center">
+          <h2 class="fun-title text-xl sm:text-2xl font-bold text-emerald-700">School Explorer 🏫</h2>
+          <p class="arabic-helper text-xs text-emerald-600 font-semibold">المس أي صورة لسماع نطق الكلمة بالإنجليزية</p>
+        </div>
+        <!-- Tab between Classroom & Playground -->
+        <div class="flex bg-emerald-100 p-1 rounded-2xl">
+          <button id="explorerTabClass" onclick="setExplorerTab('classroom')" class="px-3 py-1 text-xs sm:text-sm font-bold rounded-xl bg-emerald-600 text-white shadow">
+            Classroom 🎒
+          </button>
+          <button id="explorerTabYard" onclick="setExplorerTab('playground')" class="px-3 py-1 text-xs sm:text-sm font-bold rounded-xl text-emerald-800 hover:bg-emerald-200">
+            Playground 🛝
+          </button>
+        </div>
+      </div>
+
+      <!-- Speaking Big Banner -->
+      <div id="explorerBanner" class="bg-emerald-500 text-white p-4 rounded-3xl shadow-md text-center mb-4 flex items-center justify-between px-6">
+        <div class="flex items-center gap-3">
+          <span id="explorerBannerIcon" class="text-4xl floating-anim">👆</span>
+          <div class="text-left">
+            <p id="explorerBannerWord" class="fun-title text-2xl sm:text-3xl font-extrabold tracking-wide">Tap any item!</p>
+            <p id="explorerBannerSentence" class="text-xs sm:text-sm text-emerald-100">Click to listen and practice saying it</p>
+            <p id="explorerBannerAr" class="arabic-helper text-xs text-yellow-200 font-bold">اضغط على أي عنصر للاستماع</p>
+          </div>
+        </div>
+        <button onclick="repeatLastSpoken()" class="w-12 h-12 bg-white text-emerald-700 rounded-2xl flex items-center justify-center text-xl shadow-md bounce-hover">
+          🔊
+        </button>
+      </div>
+
+      <!-- Vocabulary Grid -->
+      <div id="explorerGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 flex-1">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SCREEN 3: "WHAT CAN YOU SEE?" QUESTION QUEST -->
+    <!-- ======================================================== -->
+    <section id="screen-mystery" class="screen-view hidden flex-col">
+      <div class="flex items-center justify-between mb-4">
+        <button onclick="goToScreen('home')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 rounded-2xl font-bold text-sm flex items-center gap-1 bounce-hover">
+          ⬅ Back
+        </button>
+        <div class="text-center">
+          <h2 class="fun-title text-xl sm:text-2xl font-bold text-amber-700">What Can You See? 🔍</h2>
+          <p class="arabic-helper text-xs text-amber-600 font-semibold">استمع للسؤال ثم اختر الإجابة الصحيحة</p>
+        </div>
+        <div class="bg-amber-100 text-amber-800 font-bold px-3 py-1 rounded-xl text-xs sm:text-sm">
+          Round: <span id="mysteryRoundNum">1</span>/5
+        </div>
+      </div>
+
+      <!-- Question Prompt Box -->
+      <div class="bg-gradient-to-r from-amber-400 to-orange-400 text-white rounded-3xl p-5 shadow-lg text-center relative overflow-hidden mb-5">
+        <div class="flex flex-col sm:row items-center justify-center gap-4">
+          <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-3xl">
+            🗣️
+          </div>
+          <div>
+            <p class="text-xs uppercase tracking-wider text-amber-100 font-bold">Selim asks:</p>
+            <h3 id="mysteryPromptQuestion" class="fun-title text-xl sm:text-2xl font-extrabold">"What can you see in the classroom?"</h3>
+            <p id="mysteryPromptAr" class="arabic-helper text-xs text-yellow-200 font-bold mt-0.5">ماذا تستطيع أن ترى داخل الفصل؟</p>
+          </div>
+          <button onclick="playMysteryVoicePrompt()" class="bg-white text-orange-600 px-4 py-2 rounded-2xl font-bold text-sm shadow hover:bg-amber-50 flex items-center gap-2 bounce-hover">
+            <span>🔊</span> Hear again
+          </button>
+        </div>
+      </div>
+
+      <!-- Target Clue Box -->
+      <div class="text-center mb-3">
+        <p class="text-sm font-bold text-slate-600">Find the target item: <span id="mysteryTargetWord" class="text-orange-600 text-lg uppercase font-black underline">A Book</span></p>
+      </div>
+
+      <!-- Choices -->
+      <div id="mysteryChoicesGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-2xl mx-auto w-full">
+        <!-- Injected via JavaScript -->
+      </div>
+
+      <!-- Feedback Area -->
+      <div id="mysteryFeedback" class="h-14 mt-4 flex items-center justify-center text-center">
+        <!-- Praise message or clue -->
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SCREEN 4: PHONICS POP (Ss, Aa, Nn) -->
+    <!-- ======================================================== -->
+    <section id="screen-phonics" class="screen-view hidden flex-col">
+      <div class="flex items-center justify-between mb-4">
+        <button onclick="goToScreen('home')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 rounded-2xl font-bold text-sm flex items-center gap-1 bounce-hover">
+          ⬅ Back
+        </button>
+        <div class="text-center">
+          <h2 class="fun-title text-xl sm:text-2xl font-bold text-pink-700">Phonics Pop! 🎈</h2>
+          <p class="arabic-helper text-xs text-pink-600 font-semibold">فرقع البالون الذي يبدأ بالحرف المطلوب</p>
+        </div>
+        <!-- Letter Selector Filter -->
+        <div class="flex bg-pink-100 p-1 rounded-2xl gap-1">
+          <button onclick="setPhonicsLetter('Ss')" id="phBtnSs" class="w-8 h-8 rounded-xl font-bold text-xs bg-pink-600 text-white shadow">S</button>
+          <button onclick="setPhonicsLetter('Aa')" id="phBtnAa" class="w-8 h-8 rounded-xl font-bold text-xs text-pink-900 hover:bg-pink-200">A</button>
+          <button onclick="setPhonicsLetter('Nn')" id="phBtnNn" class="w-8 h-8 rounded-xl font-bold text-xs text-pink-900 hover:bg-pink-200">N</button>
+        </div>
+      </div>
+
+      <!-- Current Letter Sound Banner -->
+      <div class="bg-pink-500 text-white rounded-3xl p-4 shadow-md flex items-center justify-between px-6 mb-4">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 bg-white text-pink-700 rounded-2xl flex items-center justify-center font-black text-2xl shadow">
+            <span id="phonicsCurrentLetterBadge">Ss</span>
+          </div>
+          <div>
+            <p class="text-xs uppercase tracking-wider text-pink-200 font-bold">Target Sound:</p>
+            <h3 id="phonicsSoundText" class="fun-title text-2xl font-extrabold tracking-wide">Letter S makes /s/ sound!</h3>
+            <p id="phonicsSoundAr" class="arabic-helper text-xs text-pink-100 font-bold">صوت الحرف (س) مثل Star و Sun</p>
+          </div>
+        </div>
+        <button onclick="speakLetterSound()" class="bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-2xl font-bold text-sm flex items-center gap-1 bounce-hover">
+          <span>🔊</span> Say Sound
+        </button>
+      </div>
+
+      <!-- Balloon Floating Grid -->
+      <div id="phonicsBalloonsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-4 flex-1">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SCREEN 5: MATH: NUMBER 2 & BLUE SQUARE -->
+    <!-- ======================================================== -->
+    <section id="screen-math" class="screen-view hidden flex-col">
+      <div class="flex items-center justify-between mb-4">
+        <button onclick="goToScreen('home')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 rounded-2xl font-bold text-sm flex items-center gap-1 bounce-hover">
+          ⬅ Back
+        </button>
+        <div class="text-center">
+          <h2 class="fun-title text-xl sm:text-2xl font-bold text-blue-700">Number 2 & Blue Square 🟦</h2>
+          <p class="arabic-helper text-xs text-blue-600 font-semibold">تعلم العد حتى ٢ وتعرف على المربع الأزرق</p>
+        </div>
+        <div class="flex bg-blue-100 p-1 rounded-2xl text-xs font-bold gap-1">
+          <button id="mathTabCount" onclick="setMathMode('count')" class="px-2.5 py-1 rounded-xl bg-blue-600 text-white shadow">Count: 2</button>
+          <button id="mathTabShape" onclick="setMathMode('shape')" class="px-2.5 py-1 rounded-xl text-blue-900 hover:bg-blue-200">Blue Square</button>
+        </div>
+      </div>
+
+      <!-- Math Activity Container -->
+      <div id="mathActivityBox" class="bg-white rounded-3xl border-4 border-blue-200 p-5 shadow-lg flex-1 flex flex-col items-center justify-center text-center">
+        <!-- Injected via JavaScript based on mode -->
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SCREEN 6: STORY TIME ("Look Around the Classroom!") -->
+    <!-- ======================================================== -->
+    <section id="screen-story" class="screen-view hidden flex-col">
+      <div class="flex items-center justify-between mb-3">
+        <button onclick="goToScreen('home')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 rounded-2xl font-bold text-sm flex items-center gap-1 bounce-hover">
+          ⬅ Back
+        </button>
+        <div class="text-center">
+          <h2 class="fun-title text-xl sm:text-2xl font-bold text-violet-700">Story: Look Around the Classroom! 📖</h2>
+          <p class="arabic-helper text-xs text-violet-600 font-semibold">قصة الدرس الثالث التفاعلية</p>
+        </div>
+        <div class="bg-violet-100 text-violet-900 font-bold px-3 py-1 rounded-xl text-xs">
+          Page <span id="storyPageNum">1</span> of 4
+        </div>
+      </div>
+
+      <!-- Story Stage Area -->
+      <div class="bg-gradient-to-b from-violet-50 to-purple-100 rounded-3xl border-4 border-violet-200 p-4 sm:p-6 shadow-lg flex flex-col items-center flex-1 justify-between">
+        
+        <!-- Story Illustration & Interactive Props -->
+        <div id="storyVisualStage" class="w-full flex-1 flex flex-col items-center justify-center p-2 relative min-h-[220px]">
+          <!-- Interactive Story Elements Injected -->
+        </div>
+
+        <!-- Dialogue Bubble -->
+        <div class="w-full bg-white rounded-2xl p-4 shadow-md border-2 border-violet-200 my-3 text-center">
+          <p id="storySpeaker" class="text-xs uppercase font-extrabold text-violet-600 tracking-wider">Teacher</p>
+          <h3 id="storyDialogue" class="fun-title text-lg sm:text-2xl font-bold text-slate-800 my-1">
+            "Good morning, class. Today we will learn about classroom objects."
+          </h3>
+          <p id="storyDialogueAr" class="arabic-helper text-xs sm:text-sm text-slate-500 font-semibold">
+            صباح الخير يا طلاب! اليوم سوف نتعلم عن أشياء الفصل الدراسي.
+          </p>
+          <div class="mt-2 flex items-center justify-center gap-2">
+            <button onclick="speakStoryText()" class="bg-violet-600 text-white px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 shadow hover:bg-violet-700 bounce-hover">
+              <span>🔊</span> Listen
+            </button>
+            <span id="storyActionPrompt" class="text-xs text-amber-600 font-bold bg-amber-50 px-2 py-1 rounded-lg border border-amber-200">
+              👉 Tap the teacher!
+            </span>
+          </div>
+        </div>
+
+        <!-- Controls: Prev / Next -->
+        <div class="flex items-center justify-between w-full max-w-md pt-2">
+          <button id="storyPrevBtn" onclick="prevStoryPage()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-2xl font-bold text-sm disabled:opacity-40 bounce-hover">
+            ◀ Previous
+          </button>
+          <!-- Page Dots -->
+          <div class="flex gap-2">
+            <span id="dot-0" class="w-3 h-3 rounded-full bg-violet-600"></span>
+            <span id="dot-1" class="w-3 h-3 rounded-full bg-slate-300"></span>
+            <span id="dot-2" class="w-3 h-3 rounded-full bg-slate-300"></span>
+            <span id="dot-3" class="w-3 h-3 rounded-full bg-slate-300"></span>
+          </div>
+          <button id="storyNextBtn" onclick="nextStoryPage()" class="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2 rounded-2xl font-bold text-sm shadow bounce-hover">
+            Next ▶
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SCREEN 7: SUPER SCHOOL QUIZ (UNIT 2 ASSESSMENT) -->
+    <!-- ======================================================== -->
+    <section id="screen-quiz" class="screen-view hidden flex-col">
+      <div class="flex items-center justify-between mb-4">
+        <button onclick="goToScreen('home')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 rounded-2xl font-bold text-sm flex items-center gap-1 bounce-hover">
+          ⬅ Back
+        </button>
+        <div class="text-center">
+          <h2 class="fun-title text-xl sm:text-2xl font-bold text-amber-800">Super School Quiz 🏆</h2>
+          <p class="arabic-helper text-xs text-amber-700 font-semibold">استمع للسؤال واختر الإجابة الصحيحة</p>
+        </div>
+        <div class="bg-amber-200 text-amber-950 font-black px-3 py-1 rounded-xl text-xs sm:text-sm shadow-sm">
+          Question <span id="quizQuestionIdx">1</span>/<span id="quizTotalQuestions">6</span>
+        </div>
+      </div>
+
+      <!-- Active Quiz Content Box -->
+      <div id="quizActiveArea" class="flex flex-col flex-1">
+        
+        <!-- Question Prompt Banner -->
+        <div class="bg-gradient-to-r from-amber-400 via-orange-400 to-yellow-400 text-white rounded-3xl p-5 shadow-lg text-center relative overflow-hidden mb-5">
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div id="quizStageVisual" class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-4xl shadow-inner shrink-0">
+              🎒
+            </div>
+            <div class="text-center sm:text-left flex-1">
+              <span id="quizCategoryBadge" class="inline-block bg-white/30 text-amber-950 text-xs px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider mb-1">Classroom Object</span>
+              <h3 id="quizQuestionPrompt" class="fun-title text-xl sm:text-2xl font-extrabold text-white drop-shadow">"Can you find the pencil?"</h3>
+              <p id="quizQuestionAr" class="arabic-helper text-xs sm:text-sm text-yellow-100 font-bold mt-0.5">أين قلم الرصاص؟ (Pencil)</p>
+            </div>
+            <button onclick="repeatQuizVoice()" class="bg-white text-orange-600 hover:bg-orange-50 px-4 py-2 rounded-2xl font-black text-sm shadow flex items-center gap-1.5 shrink-0 bounce-hover">
+              <span>🔊</span> Hear 🗣️
+            </button>
+          </div>
+        </div>
+
+        <!-- Answers Grid -->
+        <div id="quizAnswersGrid" class="grid grid-cols-2 gap-4 w-full flex-1 max-w-2xl mx-auto">
+          <!-- Dynamically populated options -->
+        </div>
+
+        <!-- Feedback Box -->
+        <div id="quizFeedback" class="h-12 mt-4 flex items-center justify-center text-center"></div>
+      </div>
+
+      <!-- Quiz Completed Certificate Result Card (Initially hidden) -->
+      <div id="quizResultArea" class="hidden flex-col items-center justify-center bg-white rounded-3xl p-6 sm:p-8 border-4 border-amber-300 shadow-xl text-center max-w-xl mx-auto my-auto">
+        <span class="text-7xl mb-3 floating-anim">🌟🎓🌟</span>
+        <h3 class="fun-title text-3xl font-black text-amber-900 mb-1">You Are a School Star!</h3>
+        <p class="text-slate-600 text-base mb-4">You finished the El-Moasser KG1 Unit 2 Assessment!</p>
+        
+        <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 w-full mb-5 flex items-center justify-around">
+          <div>
+            <p class="text-xs text-amber-800 font-bold uppercase">Final Score</p>
+            <p id="quizFinalScore" class="text-3xl font-black text-amber-900">6 / 6</p>
+          </div>
+          <div>
+            <p class="text-xs text-amber-800 font-bold uppercase">Bonus Stars</p>
+            <p id="quizBonusStars" class="text-3xl font-black text-amber-900">+10 ⭐</p>
+          </div>
+        </div>
+
+        <p id="quizPraiseMessage" class="text-emerald-700 font-bold text-sm mb-6">Excellent listening and pronunciation!</p>
+
+        <div class="flex gap-3">
+          <button onclick="startQuizGame()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-5 py-2.5 rounded-2xl shadow transition bounce-hover text-sm">
+            Play Again 🔄
+          </button>
+          <button onclick="goToScreen('stickers')" class="bg-rose-500 hover:bg-rose-600 text-white font-bold px-5 py-2.5 rounded-2xl shadow transition bounce-hover text-sm">
+            Go to Playground 🎪
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SCREEN 8: STICKER PLAYGROUND / REWARD CANVAS -->
+    <!-- ======================================================== -->
+    <section id="screen-stickers" class="screen-view hidden flex-col">
+      <div class="flex items-center justify-between mb-3">
+        <button onclick="goToScreen('home')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 rounded-2xl font-bold text-sm flex items-center gap-1 bounce-hover">
+          ⬅ Back
+        </button>
+        <div class="text-center">
+          <h2 class="fun-title text-xl sm:text-2xl font-bold text-rose-700">My School Playground 🎪</h2>
+          <p class="arabic-helper text-xs text-rose-600 font-semibold">اختر ملصقاً واضغط في أي مكان على لوحة الملعب لتضعه!</p>
+        </div>
+        <button onclick="clearStickers()" class="bg-rose-100 text-rose-800 hover:bg-rose-200 px-3 py-1.5 rounded-2xl font-bold text-xs bounce-hover">
+          🧹 Clear
+        </button>
+      </div>
+
+      <!-- Sticker Tray -->
+      <div class="bg-white p-3 rounded-2xl border-2 border-rose-200 shadow-sm mb-3 flex items-center gap-3 overflow-x-auto">
+        <span class="text-xs font-bold text-slate-500 whitespace-nowrap">Pick a sticker:</span>
+        <div id="stickerTray" class="flex gap-2">
+          <!-- Rendered stickers -->
+        </div>
+      </div>
+
+      <!-- Interactive Stamp Canvas -->
+      <div id="playgroundCanvas" onclick="placeSticker(event)" class="bg-gradient-to-b from-sky-200 via-sky-100 to-emerald-200 rounded-3xl border-4 border-dashed border-rose-300 flex-1 relative overflow-hidden cursor-crosshair min-h-[300px] shadow-inner">
+        <div class="absolute bottom-4 left-6 text-6xl pointer-events-none opacity-80">🏫</div>
+        <div class="absolute bottom-4 right-10 text-6xl pointer-events-none opacity-80">🛝</div>
+        <div class="absolute bottom-4 right-32 text-6xl pointer-events-none opacity-80">🎪</div>
+        <div class="absolute top-4 left-6 text-5xl pointer-events-none opacity-80">☀️</div>
+        <div class="absolute top-4 right-8 text-4xl pointer-events-none opacity-80">☁️</div>
+        
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none text-slate-400 font-bold text-sm bg-white/70 px-4 py-2 rounded-full backdrop-blur-sm">
+          Tap anywhere to stamp your sticker! 👆
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    /* ===============================================================
+       AUDIO SYNTHESIZER & NATURAL VOICE ENGINE
+       =============================================================== */
+    
+    let audioCtx = null;
+    let isMuted = false;
+    let showArabic = true;
+    let totalStars = 0;
+    let preferredUSVoice = null;
+    let availableVoices = [];
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    // Kid-friendly tone synthesizers without external audio dependencies
+    function playChime(type) {
+      if (isMuted) return;
+      try {
+        initAudio();
+        const ctx = audioCtx;
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'correct') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now); // C5
+          osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+          osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+          osc.frequency.setValueAtTime(1046.50, now + 0.3); // C6
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.55);
+          osc.start(now);
+          osc.stop(now + 0.55);
+        } else if (type === 'pop') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(320, now);
+          osc.frequency.exponentialRampToValueAtTime(840, now + 0.08);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+          osc.start(now);
+          osc.stop(now + 0.1);
+        } else if (type === 'tryAgain') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(340, now);
+          osc.frequency.setValueAtTime(260, now + 0.12);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else if (type === 'star') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(880, now);
+          osc.frequency.setValueAtTime(1320, now + 0.08);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+          osc.start(now);
+          osc.stop(now + 0.4);
+        }
+      } catch (e) {
+        console.warn("Audio error", e);
+      }
+    }
+
+    // Intelligently find and rank natural human/neural American English voices
+    function populateAmericanVoices() {
+      if (!('speechSynthesis' in window)) return;
+      availableVoices = window.speechSynthesis.getVoices();
+      const voiceSelect = document.getElementById('voiceSelect');
+      if (voiceSelect) {
+        voiceSelect.innerHTML = '';
+      }
+
+      // Filter for American English (en-US)
+      const usVoices = availableVoices.filter(v => v.lang === 'en-US' || v.lang === 'en_US');
+      const otherEnVoices = availableVoices.filter(v => v.lang.startsWith('en') && v.lang !== 'en-US');
+
+      // Ranking high-quality human/natural sounding voices over mechanical ones
+      const naturalKeywords = [
+        'natural', 'neural', 'online', 'google us english', 'samantha', 'jenny', 'ava',
+        'allison', 'aria', 'guy', 'zoe', 'tom', 'alex', 'kathy', 'victoria'
+      ];
+
+      // Sort voices giving top priority to natural/neural voices
+      usVoices.sort((a, b) => {
+        const aName = a.name.toLowerCase();
+        const bName = b.name.toLowerCase();
+        const aScore = naturalKeywords.some(k => aName.includes(k)) ? 1 : 0;
+        const bScore = naturalKeywords.some(k => bName.includes(k)) ? 1 : 0;
+        return bScore - aScore;
+      });
+
+      if (usVoices.length > 0) {
+        preferredUSVoice = usVoices[0];
+      } else if (otherEnVoices.length > 0) {
+        preferredUSVoice = otherEnVoices[0];
+      }
+
+      if (voiceSelect) {
+        const allList = usVoices.length > 0 ? usVoices : otherEnVoices;
+        allList.forEach((v) => {
+          const opt = document.createElement('option');
+          opt.value = v.name;
+          const cleanName = v.name.replace('Microsoft ', '').replace('Online (Natural)', 'Natural').replace('Google ', '');
+          opt.textContent = `${cleanName} (US)`;
+          opt.className = "text-slate-800";
+          if (preferredUSVoice && preferredUSVoice.name === v.name) {
+            opt.selected = true;
+          }
+          voiceSelect.appendChild(opt);
+        });
+      }
+    }
+
+    function changeVoiceSelection(voiceName) {
+      const match = availableVoices.find(v => v.name === voiceName);
+      if (match) {
+        preferredUSVoice = match;
+        speakText("Hello! I am your kindergarten teacher! Let's learn together!");
+      }
+    }
+
+    function testTeacherVoice() {
+      speakText("Hello kindergarten friend! Welcome to our school!");
+    }
+
+    // Natural human teacher speech: pleasant pitch, warm ESL pace (0.83x)
+    function speakText(text, rate = 0.83) {
+      if (isMuted || !('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = rate; // Gentle, clear preschool pacing
+      utterance.pitch = 1.12; // Warm, upbeat friendly pitch (avoids flat robotic drone)
+      utterance.lang = 'en-US';
+
+      if (preferredUSVoice) {
+        utterance.voice = preferredUSVoice;
+      }
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function toggleMute() {
+      isMuted = !isMuted;
+      document.getElementById('soundIcon').innerText = isMuted ? '🔇' : '🔊';
+      if (isMuted && ('speechSynthesis' in window)) {
+        window.speechSynthesis.cancel();
+      }
+    }
+
+    function toggleArabicHelp() {
+      showArabic = !showArabic;
+      document.getElementById('langToggleText').innerText = showArabic ? 'AR Help: ON' : 'AR Help: OFF';
+      const arabicElems = document.querySelectorAll('.arabic-helper');
+      arabicElems.forEach(el => {
+        el.style.display = showArabic ? 'block' : 'none';
+      });
+    }
+
+    function addStar(count = 1) {
+      totalStars += count;
+      document.getElementById('starCounter').innerText = totalStars;
+      playChime('star');
+      createConfetti();
+    }
+
+    function createConfetti() {
+      const colors = ['#f59e0b', '#ec4899', '#3b82f6', '#10b981', '#8b5cf6', '#ef4444'];
+      for (let i = 0; i < 20; i++) {
+        const conf = document.createElement('div');
+        conf.className = 'confetti-piece rounded-full pointer-events-none z-50';
+        conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        conf.style.left = `${Math.random() * 95}vw`;
+        conf.style.top = `10vh`;
+        conf.style.transform = `scale(${0.6 + Math.random() * 0.8})`;
+        document.body.appendChild(conf);
+        setTimeout(() => conf.remove(), 2200);
+      }
+    }
+
+    function goToScreen(screenId) {
+      initAudio();
+      document.querySelectorAll('.screen-view').forEach(s => {
+        s.classList.add('hidden');
+        s.classList.remove('active');
+      });
+      const target = document.getElementById(`screen-${screenId}`);
+      if (target) {
+        target.classList.remove('hidden');
+        target.classList.add('active');
+      }
+    }
+
+    /* ===============================================================
+       UNIT 2 DATA ASSETS (From El-Moasser KG1 First Term)
+       =============================================================== */
+    
+    const UNIT2_VOCAB = [
+      // Classroom items
+      { id: 'classroom', word: 'classroom', category: 'classroom', emoji: '🏫', ar: 'فصل دراسي', phrase: 'This is my classroom.' },
+      { id: 'teacher', word: 'teacher', category: 'classroom', emoji: '👩‍🏫', ar: 'معلمة / معلم', phrase: 'Good morning, teacher!' },
+      { id: 'board', word: 'board', category: 'classroom', emoji: '🟩', ar: 'سبورة', phrase: 'Look at the board.' },
+      { id: 'desk', word: 'desk', category: 'classroom', emoji: '🪑', ar: 'مكتب', phrase: 'I sit at my desk.' },
+      { id: 'chair', word: 'chair', category: 'classroom', emoji: '🪑', ar: 'كرسي', phrase: 'I can see a chair.' },
+      { id: 'book', word: 'book', category: 'classroom', emoji: '📖', ar: 'كتاب', phrase: 'I open my book.' },
+      { id: 'pencil', word: 'pencil', category: 'classroom', emoji: '✏️', ar: 'قلم رصاص', phrase: 'I write with a pencil.' },
+      { id: 'eraser', word: 'eraser', category: 'classroom', emoji: '🧼', ar: 'أستيكة / ممحاة', phrase: 'Use your eraser!' },
+      { id: 'crayon', word: 'crayon', category: 'classroom', emoji: '🖍️', ar: 'قلم ألوان', phrase: 'Color with a crayon.' },
+      // Playground items
+      { id: 'playground', word: 'playground', category: 'playground', emoji: '🎪', ar: 'ملعب', phrase: 'I play in the playground.' },
+      { id: 'swing', word: 'swing', category: 'playground', emoji: '🪵', ar: 'أرجوحة', phrase: 'I can see a swing!' },
+      { id: 'slide', word: 'slide', category: 'playground', emoji: '🛝', ar: 'زحليقة', phrase: 'I love the slide!' }
+    ];
+
+    const PHONICS_ITEMS = [
+      { letter: 'Ss', word: 'star', emoji: '⭐', ar: 'نجمة', soundDesc: '/s/ as in star' },
+      { letter: 'Ss', word: 'sun', emoji: '☀️', ar: 'شمس', soundDesc: '/s/ as in sun' },
+      { letter: 'Ss', word: 'school', emoji: '🏫', ar: 'مدرسة', soundDesc: '/s/ as in school' },
+      { letter: 'Aa', word: 'apple', emoji: '🍎', ar: 'تفاحة', soundDesc: '/æ/ as in apple' },
+      { letter: 'Aa', word: 'ant', emoji: '🐜', ar: 'نملة', soundDesc: '/æ/ as in ant' },
+      { letter: 'Nn', word: 'nest', emoji: '🪺', ar: 'عش', soundDesc: '/n/ as in nest' },
+      { letter: 'Nn', word: 'night', emoji: '🌙', ar: 'ليل', soundDesc: '/n/ as in night' },
+      { letter: 'Nn', word: 'numbers', emoji: '🔢', ar: 'أرقام', soundDesc: '/n/ as in numbers' }
+    ];
+
+    /* ===============================================================
+       GAME 1: SCHOOL EXPLORER (LESSON 1)
+       =============================================================== */
+    let currentExplorerCategory = 'classroom';
+    let lastSpokenExplorer = { word: 'classroom', phrase: 'This is my classroom.' };
+
+    function startExplorerGame() {
+      goToScreen('explorer');
+      setExplorerTab('classroom');
+    }
+
+    function setExplorerTab(cat) {
+      currentExplorerCategory = cat;
+      const tabClass = document.getElementById('explorerTabClass');
+      const tabYard = document.getElementById('explorerTabYard');
+      if (cat === 'classroom') {
+        tabClass.className = "px-3 py-1 text-xs sm:text-sm font-bold rounded-xl bg-emerald-600 text-white shadow";
+        tabYard.className = "px-3 py-1 text-xs sm:text-sm font-bold rounded-xl text-emerald-800 hover:bg-emerald-200";
+      } else {
+        tabYard.className = "px-3 py-1 text-xs sm:text-sm font-bold rounded-xl bg-emerald-600 text-white shadow";
+        tabClass.className = "px-3 py-1 text-xs sm:text-sm font-bold rounded-xl text-emerald-800 hover:bg-emerald-200";
+      }
+      renderExplorerGrid();
+    }
+
+    function renderExplorerGrid() {
+      const grid = document.getElementById('explorerGrid');
+      grid.innerHTML = '';
+      const items = UNIT2_VOCAB.filter(i => i.category === currentExplorerCategory);
+
+      items.forEach(item => {
+        const btn = document.createElement('button');
+        btn.onclick = () => selectExplorerItem(item);
+        btn.className = "bg-white border-2 border-emerald-200 hover:border-emerald-500 rounded-3xl p-3 sm:p-4 text-center shadow-sm hover:shadow-md transition bounce-hover flex flex-col items-center justify-between";
+        btn.innerHTML = `
+          <div class="text-4xl sm:text-5xl my-2">${item.emoji}</div>
+          <div>
+            <p class="font-bold text-base sm:text-lg text-slate-800 capitalize">${item.word}</p>
+            <p class="arabic-helper text-xs text-emerald-600 font-semibold" style="${showArabic ? '' : 'display:none;'}">${item.ar}</p>
+          </div>
+          <span class="mt-2 text-xs bg-emerald-50 text-emerald-700 px-2.5 py-0.5 rounded-full font-bold">Tap to hear 🔊</span>
+        `;
+        grid.appendChild(btn);
+      });
+    }
+
+    function selectExplorerItem(item) {
+      lastSpokenExplorer = item;
+      document.getElementById('explorerBannerIcon').innerText = item.emoji;
+      document.getElementById('explorerBannerWord').innerText = item.word.toUpperCase();
+      document.getElementById('explorerBannerSentence').innerText = `"${item.phrase}"`;
+      document.getElementById('explorerBannerAr').innerText = item.ar;
+      
+      playChime('pop');
+      speakText(`${item.word}! ${item.phrase}`);
+      addStar(1);
+    }
+
+    function repeatLastSpoken() {
+      if (lastSpokenExplorer) {
+        speakText(`${lastSpokenExplorer.word}! ${lastSpokenExplorer.phrase}`);
+      }
+    }
+
+    /* ===============================================================
+       GAME 2: "WHAT CAN YOU SEE?" QUESTION QUEST
+       =============================================================== */
+    let mysteryQuestions = [
+      {
+        question: "What can you see in the classroom?",
+        questionAr: "ماذا تستطيع أن ترى في الفصل الدراسي؟",
+        target: "book",
+        targetText: "A book.",
+        targetAr: "كتاب",
+        emoji: "📖",
+        distractors: ["swing", "slide"]
+      },
+      {
+        question: "What can you see at the playground?",
+        questionAr: "ماذا تستطيع أن ترى في الملعب؟",
+        target: "slide",
+        targetText: "A slide.",
+        targetAr: "زحليقة",
+        emoji: "🛝",
+        distractors: ["board", "desk"]
+      },
+      {
+        question: "What can you see in the classroom?",
+        questionAr: "ماذا تستطيع أن ترى في الفصل الدراسي؟",
+        target: "pencil",
+        targetText: "A pencil.",
+        targetAr: "قلم رصاص",
+        emoji: "✏️",
+        distractors: ["swing", "playground"]
+      },
+      {
+        question: "What can you see at the playground?",
+        questionAr: "ماذا تستطيع أن ترى في الملعب؟",
+        target: "swing",
+        targetText: "A swing.",
+        targetAr: "أرجوحة",
+        emoji: "🪵",
+        distractors: ["eraser", "crayon"]
+      },
+      {
+        question: "What can you see in the classroom?",
+        questionAr: "ماذا تستطيع أن ترى في الفصل الدراسي؟",
+        target: "chair",
+        targetText: "A chair.",
+        targetAr: "كرسي",
+        emoji: "🪑",
+        distractors: ["slide", "swing"]
+      }
+    ];
+    let mysteryCurrentIndex = 0;
+
+    function startMysteryGame() {
+      mysteryCurrentIndex = 0;
+      goToScreen('mystery');
+      loadMysteryQuestion();
+    }
+
+    function loadMysteryQuestion() {
+      const q = mysteryQuestions[mysteryCurrentIndex];
+      document.getElementById('mysteryRoundNum').innerText = (mysteryCurrentIndex + 1);
+      document.getElementById('mysteryPromptQuestion').innerText = `"${q.question}"`;
+      document.getElementById('mysteryPromptAr').innerText = q.questionAr;
+      document.getElementById('mysteryTargetWord').innerText = q.targetText;
+      document.getElementById('mysteryFeedback').innerHTML = '';
+
+      const choices = [
+        { id: q.target, word: q.targetText, emoji: q.emoji, ar: q.targetAr, isCorrect: true },
+        ...q.distractors.map(dId => {
+          const item = UNIT2_VOCAB.find(v => v.id === dId) || { id: dId, word: dId, emoji: '✨', ar: '' };
+          return { id: item.id, word: `A ${item.word}.`, emoji: item.emoji, ar: item.ar, isCorrect: false };
+        })
+      ];
+      choices.sort(() => Math.random() - 0.5);
+
+      const grid = document.getElementById('mysteryChoicesGrid');
+      grid.innerHTML = '';
+      choices.forEach(ch => {
+        const btn = document.createElement('button');
+        btn.onclick = () => handleMysteryAnswer(ch, btn);
+        btn.className = "mystery-card bg-white border-4 border-amber-200 hover:border-amber-400 rounded-3xl p-4 sm:p-5 text-center shadow-md transition bounce-hover flex flex-col items-center justify-center gap-2";
+        btn.innerHTML = `
+          <span class="text-5xl sm:text-6xl">${ch.emoji}</span>
+          <p class="font-bold text-lg text-slate-800 capitalize">${ch.word}</p>
+          <p class="arabic-helper text-xs text-amber-700 font-semibold" style="${showArabic ? '' : 'display:none;'}">${ch.ar}</p>
+        `;
+        grid.appendChild(btn);
+      });
+
+      setTimeout(() => {
+        speakText(`${q.question} Can you find ${q.targetText}?`);
+      }, 350);
+    }
+
+    function playMysteryVoicePrompt() {
+      const q = mysteryQuestions[mysteryCurrentIndex];
+      speakText(`${q.question} Find ${q.targetText}`);
+    }
+
+    function handleMysteryAnswer(choice, btnElement) {
+      const feedback = document.getElementById('mysteryFeedback');
+      if (choice.isCorrect) {
+        btnElement.classList.remove('border-amber-200');
+        btnElement.classList.add('border-emerald-500', 'bg-emerald-50');
+        playChime('correct');
+        speakText(`Great job! ${choice.word}!`);
+        feedback.innerHTML = `<span class="text-emerald-700 font-extrabold text-lg sm:text-xl pop-in">🌟 Excellent! "${choice.word}" 🌟</span>`;
+        addStar(2);
+
+        setTimeout(() => {
+          mysteryCurrentIndex++;
+          if (mysteryCurrentIndex < mysteryQuestions.length) {
+            loadMysteryQuestion();
+          } else {
+            playChime('correct');
+            feedback.innerHTML = `
+              <div class="pop-in flex flex-col items-center">
+                <span class="text-xl sm:text-2xl font-black text-amber-800">🎉 Super School Detective! All 5 solved! 🎉</span>
+                <button onclick="startMysteryGame()" class="mt-2 bg-amber-500 text-white font-bold px-4 py-1.5 rounded-2xl shadow bounce-hover text-sm">Play Again 🔄</button>
+              </div>
+            `;
+            speakText("Hooray! You found all school objects! High five!");
+          }
+        }, 1500);
+      } else {
+        btnElement.classList.add('border-rose-400', 'bg-rose-50');
+        playChime('tryAgain');
+        speakText(`Try again! Find ${mysteryQuestions[mysteryCurrentIndex].targetText}`);
+        feedback.innerHTML = `<span class="text-rose-600 font-bold text-sm pop-in">Almost! Try once more 😊</span>`;
+      }
+    }
+
+    /* ===============================================================
+       GAME 3: PHONICS POP (LETTERS Ss, Aa, Nn)
+       =============================================================== */
+    let selectedPhonicsLetter = 'Ss';
+
+    function startPhonicsGame() {
+      goToScreen('phonics');
+      setPhonicsLetter('Ss');
+    }
+
+    function setPhonicsLetter(letter) {
+      selectedPhonicsLetter = letter;
+      ['Ss', 'Aa', 'Nn'].forEach(l => {
+        const btn = document.getElementById(`phBtn${l}`);
+        if (l === letter) {
+          btn.className = "w-8 h-8 rounded-xl font-bold text-xs bg-pink-600 text-white shadow";
+        } else {
+          btn.className = "w-8 h-8 rounded-xl font-bold text-xs text-pink-900 hover:bg-pink-200";
+        }
+      });
+
+      document.getElementById('phonicsCurrentLetterBadge').innerText = letter;
+      
+      let soundInfo = "";
+      let arInfo = "";
+      if (letter === 'Ss') {
+        soundInfo = "Letter Ss says /s/! Star, Sun, School!";
+        arInfo = "حرف S وصوته /س/ مثل: Star و Sun و School";
+      } else if (letter === 'Aa') {
+        soundInfo = "Letter Aa says /æ/! Apple, Ant!";
+        arInfo = "حرف A وصوته /أ/ مثل: Apple و Ant";
+      } else {
+        soundInfo = "Letter Nn says /n/! Nest, Night, Numbers!";
+        arInfo = "حرف N وصوته /ن/ مثل: Nest و Night و Numbers";
+      }
+      document.getElementById('phonicsSoundText').innerText = soundInfo;
+      document.getElementById('phonicsSoundAr').innerText = arInfo;
+
+      renderPhonicsBalloons();
+      speakLetterSound();
+    }
+
+    function speakLetterSound() {
+      if (selectedPhonicsLetter === 'Ss') {
+        speakText("S says sssss. S is for Star, Sun, and School!");
+      } else if (selectedPhonicsLetter === 'Aa') {
+        speakText("A says ah. A is for Apple and Ant!");
+      } else {
+        speakText("N says nnnn. N is for Nest, Night, and Numbers!");
+      }
+    }
+
+    function renderPhonicsBalloons() {
+      const container = document.getElementById('phonicsBalloonsContainer');
+      container.innerHTML = '';
+
+      const targets = PHONICS_ITEMS.filter(item => item.letter === selectedPhonicsLetter);
+      const otherItems = PHONICS_ITEMS.filter(item => item.letter !== selectedPhonicsLetter);
+      const pool = [...targets, ...otherItems.slice(0, 3)].sort(() => Math.random() - 0.5);
+
+      pool.forEach(item => {
+        const isTarget = (item.letter === selectedPhonicsLetter);
+        const card = document.createElement('div');
+        card.className = "balloon-item bg-white border-4 border-pink-200 rounded-3xl p-4 text-center shadow-md cursor-pointer transition bounce-hover flex flex-col items-center justify-between";
+        card.innerHTML = `
+          <div class="text-5xl my-2 floating-anim">${item.emoji}</div>
+          <div>
+            <span class="inline-block px-2 py-0.5 rounded-full text-xs font-bold ${isTarget ? 'bg-pink-100 text-pink-700' : 'bg-slate-100 text-slate-600'}">
+              Letter ${item.letter.charAt(0)}
+            </span>
+            <h4 class="font-bold text-lg text-slate-800 capitalize mt-1">${item.word}</h4>
+            <p class="arabic-helper text-xs text-pink-600 font-semibold" style="${showArabic ? '' : 'display:none;'}">${item.ar}</p>
+          </div>
+          <button class="mt-2 w-full bg-pink-50 hover:bg-pink-100 text-pink-700 py-1 rounded-xl text-xs font-bold">Pop! 🎈</button>
+        `;
+        card.onclick = () => handlePhonicsPop(item, isTarget, card);
+        container.appendChild(card);
+      });
+    }
+
+    function handlePhonicsPop(item, isTarget, element) {
+      if (isTarget) {
+        playChime('pop');
+        element.classList.add('bg-pink-100', 'border-pink-500', 'scale-95');
+        speakText(`Yes! ${item.word}! ${item.letter.charAt(0)} is for ${item.word}!`);
+        addStar(1);
+        element.innerHTML = `
+          <div class="text-4xl my-3">✨🎉✨</div>
+          <p class="font-extrabold text-pink-800">${item.word.toUpperCase()}!</p>
+          <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">Popped! ⭐</span>
+        `;
+        element.onclick = null;
+      } else {
+        playChime('tryAgain');
+        speakText(`${item.word} starts with letter ${item.letter.charAt(0)}. Find letter ${selectedPhonicsLetter.charAt(0)}!`);
+      }
+    }
+
+    /* ===============================================================
+       GAME 4: MATH: NUMBER 2 & BLUE SQUARE
+       =============================================================== */
+    let currentMathMode = 'count';
+    let currentCountChallengeIndex = 0;
+
+    const MATH_CHALLENGES = [
+      {
+        title: "I can see 2 chairs!",
+        titleAr: "أستطيع أن أرى كرسيين (اثنان)!",
+        questionVoice: "Can you tap the group with 2 chairs?",
+        correctOption: 2,
+        itemWord: "chairs",
+        leftCount: 1, leftEmoji: "🪑", leftText: "1 chair",
+        rightCount: 2, rightEmoji: "🪑 🪑", rightText: "2 chairs"
+      },
+      {
+        title: "I can see 2 pencils!",
+        titleAr: "أستطيع أن أرى قلمين رصاص!",
+        questionVoice: "Which one has 2 pencils?",
+        correctOption: 2,
+        itemWord: "pencils",
+        leftCount: 2, leftEmoji: "✏️ ✏️", leftText: "2 pencils",
+        rightCount: 1, rightEmoji: "✏️", rightText: "1 pencil"
+      },
+      {
+        title: "I can see 2 squares!",
+        titleAr: "أستطيع أن أرى مربعين!",
+        questionVoice: "Tap the group with 2 squares!",
+        correctOption: 2,
+        itemWord: "squares",
+        leftCount: 1, leftEmoji: "🟦", leftText: "1 square",
+        rightCount: 2, rightEmoji: "🟦 🟦", rightText: "2 squares"
+      }
+    ];
+
+    function startMathGame() {
+      goToScreen('math');
+      setMathMode('count');
+    }
+
+    function setMathMode(mode) {
+      currentMathMode = mode;
+      const btnCount = document.getElementById('mathTabCount');
+      const btnShape = document.getElementById('mathTabShape');
+
+      if (mode === 'count') {
+        btnCount.className = "px-2.5 py-1 rounded-xl bg-blue-600 text-white shadow";
+        btnShape.className = "px-2.5 py-1 rounded-xl text-blue-900 hover:bg-blue-200";
+        renderMathCount();
+      } else {
+        btnShape.className = "px-2.5 py-1 rounded-xl bg-blue-600 text-white shadow";
+        btnCount.className = "px-2.5 py-1 rounded-xl text-blue-900 hover:bg-blue-200";
+        renderMathShape();
+      }
+    }
+
+    function renderMathCount() {
+      const box = document.getElementById('mathActivityBox');
+      const ch = MATH_CHALLENGES[currentCountChallengeIndex % MATH_CHALLENGES.length];
+
+      box.innerHTML = `
+        <div class="max-w-xl w-full">
+          <span class="inline-block bg-blue-100 text-blue-800 text-xs uppercase px-3 py-1 rounded-full font-extrabold mb-2">Number 2 Focus • جمع الأسماء بـ (s)</span>
+          <h3 class="fun-title text-2xl sm:text-3xl font-extrabold text-blue-900 mb-1">${ch.title}</h3>
+          <p class="arabic-helper text-sm text-blue-700 font-semibold mb-4" style="${showArabic ? '' : 'display:none;'}">${ch.titleAr}</p>
+          
+          <div class="flex items-center justify-center gap-3 mb-5">
+            <span class="text-5xl font-black text-blue-600 bg-blue-50 w-16 h-16 rounded-2xl flex items-center justify-center shadow-inner border-2 border-blue-200">2</span>
+            <p class="text-slate-600 text-sm font-semibold">1 chair ➡️ <strong>2 chairs</strong> (add -s for more than one!)</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+            <button onclick="checkMathChoice(${ch.leftCount}, ${ch.correctOption})" class="math-choice-btn bg-blue-50 border-4 border-blue-200 hover:border-blue-400 p-6 rounded-3xl transition bounce-hover text-center">
+              <div class="text-5xl mb-2">${ch.leftEmoji}</div>
+              <p class="font-extrabold text-lg text-slate-800">${ch.leftText}</p>
+              <span class="text-xs text-blue-600 font-bold">Count: ${ch.leftCount}</span>
+            </button>
+
+            <button onclick="checkMathChoice(${ch.rightCount}, ${ch.correctOption})" class="math-choice-btn bg-blue-50 border-4 border-blue-200 hover:border-blue-400 p-6 rounded-3xl transition bounce-hover text-center">
+              <div class="text-5xl mb-2">${ch.rightEmoji}</div>
+              <p class="font-extrabold text-lg text-slate-800">${ch.rightText}</p>
+              <span class="text-xs text-blue-600 font-bold">Count: ${ch.rightCount}</span>
+            </button>
+          </div>
+
+          <div id="mathFeedback" class="h-10 mt-4 flex items-center justify-center font-bold text-base"></div>
+        </div>
+      `;
+      speakText(ch.questionVoice);
+    }
+
+    function checkMathChoice(chosenCount, correctCount) {
+      const fb = document.getElementById('mathFeedback');
+      if (chosenCount === correctCount) {
+        playChime('correct');
+        fb.innerHTML = `<span class="text-emerald-600 font-extrabold text-xl pop-in">🎉 Yes! Exactly 2! One, Two! ⭐</span>`;
+        speakText("Awesome! One, two! Two items!");
+        addStar(2);
+        setTimeout(() => {
+          currentCountChallengeIndex++;
+          renderMathCount();
+        }, 1400);
+      } else {
+        playChime('tryAgain');
+        fb.innerHTML = `<span class="text-rose-500 font-bold pop-in">That is 1. Let's find 2! 😊</span>`;
+        speakText("That is one. Can you find two?");
+      }
+    }
+
+    function renderMathShape() {
+      const box = document.getElementById('mathActivityBox');
+      box.innerHTML = `
+        <div class="max-w-xl w-full">
+          <span class="inline-block bg-blue-100 text-blue-800 text-xs uppercase px-3 py-1 rounded-full font-extrabold mb-2">Shape & Color Focus</span>
+          <h3 class="fun-title text-2xl sm:text-3xl font-extrabold text-blue-900 mb-1">"I can see a blue square!"</h3>
+          <p class="arabic-helper text-sm text-blue-700 font-semibold mb-4" style="${showArabic ? '' : 'display:none;'}">أستطيع أن أرى مربعاً أزرق اللون!</p>
+          
+          <p class="text-slate-600 font-semibold mb-4">Tap the <strong>Blue Square</strong> among the shapes!</p>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <button onclick="checkShapePick(true, 'Blue Square!')" class="bg-slate-50 border-4 border-slate-200 hover:border-blue-500 p-4 rounded-3xl flex flex-col items-center gap-2 bounce-hover">
+              <div class="w-16 h-16 bg-blue-500 rounded-xl shadow-md border-2 border-blue-600"></div>
+              <span class="font-bold text-xs text-slate-700">Blue Square</span>
+            </button>
+
+            <button onclick="checkShapePick(false, 'Red Circle')" class="bg-slate-50 border-4 border-slate-200 hover:border-rose-400 p-4 rounded-3xl flex flex-col items-center gap-2 bounce-hover">
+              <div class="w-16 h-16 bg-red-500 rounded-full shadow-md border-2 border-red-600"></div>
+              <span class="font-bold text-xs text-slate-700">Red Circle</span>
+            </button>
+
+            <button onclick="checkShapePick(false, 'Yellow Star')" class="bg-slate-50 border-4 border-slate-200 hover:border-yellow-400 p-4 rounded-3xl flex flex-col items-center gap-2 bounce-hover">
+              <div class="text-5xl">⭐</div>
+              <span class="font-bold text-xs text-slate-700">Yellow Star</span>
+            </button>
+
+            <button onclick="checkShapePick(false, 'Green Circle')" class="bg-slate-50 border-4 border-slate-200 hover:border-green-400 p-4 rounded-3xl flex flex-col items-center gap-2 bounce-hover">
+              <div class="w-16 h-16 bg-emerald-500 rounded-full shadow-md border-2 border-emerald-600"></div>
+              <span class="font-bold text-xs text-slate-700">Green Circle</span>
+            </button>
+          </div>
+
+          <div id="shapeFeedback" class="h-10 mt-4 flex items-center justify-center font-bold text-base"></div>
+        </div>
+      `;
+      speakText("I can see a blue square! Can you find the blue square?");
+    }
+
+    function checkShapePick(isCorrect, name) {
+      const fb = document.getElementById('shapeFeedback');
+      if (isCorrect) {
+        playChime('correct');
+        fb.innerHTML = `<span class="text-blue-700 font-extrabold text-xl pop-in">🌟 Correct! "I can see a blue square!" 🌟</span>`;
+        speakText("Super! I can see a blue square!");
+        addStar(2);
+      } else {
+        playChime('tryAgain');
+        fb.innerHTML = `<span class="text-rose-500 font-bold pop-in">That is a ${name}. Look for the Blue Square!</span>`;
+        speakText(`That is a ${name}. Look for the blue square!`);
+      }
+    }
+
+    /* ===============================================================
+       GAME 5: STORY TIME ("Look Around the Classroom!")
+       =============================================================== */
+    let storyCurrentPage = 0;
+    const STORY_PAGES = [
+      {
+        page: 1,
+        speaker: "Teacher",
+        dialogue: "Good morning, class. Today we will learn about classroom objects.",
+        dialogueAr: "صباح الخير يا طلاب. اليوم سوف نتعلم عن أشياء الفصل الدراسي.",
+        icon: "👩‍🏫",
+        prompt: "👉 Tap the teacher to say Good Morning!",
+        actionType: "tapTeacher",
+        illustration: `
+          <div class="text-center">
+            <div id="storyTeacherAvatar" onclick="handleStoryAction('teacher')" class="inline-block text-8xl p-4 bg-white/70 rounded-full shadow-md cursor-pointer bounce-hover border-4 border-violet-300">👩‍🏫</div>
+            <div class="mt-2 flex gap-4 justify-center text-4xl">
+              <span>🏫</span>
+              <span>🟩</span>
+              <span>🪑</span>
+            </div>
+          </div>
+        `
+      },
+      {
+        page: 2,
+        speaker: "Girl with Crayon",
+        dialogue: "I will color the flower with my crayon.",
+        dialogueAr: "أنا سوف ألون الزهرة بقلم التلوين الخاص بي.",
+        icon: "🖍️",
+        prompt: "👉 Tap the crayon to color the flower!",
+        actionType: "colorFlower",
+        illustration: `
+          <div class="flex items-center justify-center gap-6">
+            <div id="storyFlower" class="text-7xl p-3 bg-white/70 rounded-3xl border-4 border-slate-300 shadow">
+              <span id="flowerVisual" class="filter grayscale">🌸</span>
+            </div>
+            <div onclick="handleStoryAction('crayon')" class="text-7xl p-3 bg-white/70 rounded-3xl border-4 border-pink-400 cursor-pointer bounce-hover shadow">
+              🖍️
+            </div>
+          </div>
+        `
+      },
+      {
+        page: 3,
+        speaker: "Boy with Pencil",
+        dialogue: "Hello, Selim. I have a new pencil.",
+        dialogueAr: "أهلاً يا سليم. لدي قلم رصاص جديد.",
+        icon: "✏️",
+        prompt: "👉 Tap Selim's new pencil!",
+        actionType: "tapPencil",
+        illustration: `
+          <div class="flex items-center justify-center gap-6">
+            <div class="text-7xl">👦</div>
+            <div id="storyPencil" onclick="handleStoryAction('pencil')" class="text-7xl p-3 bg-white/70 rounded-3xl border-4 border-amber-300 cursor-pointer bounce-hover shadow">
+              ✏️
+            </div>
+            <div class="text-7xl">🎒</div>
+          </div>
+        `
+      },
+      {
+        page: 4,
+        speaker: "Teacher",
+        dialogue: "Don't forget to use your eraser if you make a mistake.",
+        dialogueAr: "لا تنسَ أن تستخدم ممحاتك إذا قمت بخطأ ما.",
+        icon: "🧼",
+        prompt: "👉 Tap the eraser to erase the scribble!",
+        actionType: "useEraser",
+        illustration: `
+          <div class="flex flex-col items-center justify-center gap-3">
+            <div id="storyMistakeBoard" class="bg-white p-4 rounded-2xl border-4 border-slate-300 text-center shadow">
+              <span id="scribbleText" class="text-3xl font-mono text-red-500 font-bold">❌ scribbles ❌</span>
+            </div>
+            <button onclick="handleStoryAction('eraser')" class="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-4 py-2 rounded-2xl shadow-md bounce-hover">
+              <span class="text-3xl">🧼</span> Eraser: Clean Board!
+            </button>
+          </div>
+        `
+      }
+    ];
+
+    function startStoryGame() {
+      goToScreen('story');
+      storyCurrentPage = 0;
+      loadStoryPage();
+    }
+
+    function loadStoryPage() {
+      const p = STORY_PAGES[storyCurrentPage];
+      document.getElementById('storyPageNum').innerText = p.page;
+      document.getElementById('storySpeaker').innerText = p.speaker;
+      document.getElementById('storyDialogue').innerText = `"${p.dialogue}"`;
+      document.getElementById('storyDialogueAr').innerText = p.dialogueAr;
+      document.getElementById('storyActionPrompt').innerText = p.prompt;
+      document.getElementById('storyVisualStage').innerHTML = p.illustration;
+
+      for (let i = 0; i < 4; i++) {
+        const dot = document.getElementById(`dot-${i}`);
+        if (i === storyCurrentPage) {
+          dot.className = "w-3 h-3 rounded-full bg-violet-600 scale-125";
+        } else {
+          dot.className = "w-3 h-3 rounded-full bg-slate-300";
+        }
+      }
+
+      document.getElementById('storyPrevBtn').disabled = (storyCurrentPage === 0);
+      document.getElementById('storyNextBtn').innerText = (storyCurrentPage === 3) ? "Finish 🏆" : "Next ▶";
+
+      speakText(p.dialogue);
+    }
+
+    function handleStoryAction(action) {
+      if (action === 'teacher') {
+        playChime('correct');
+        document.getElementById('storyActionPrompt').innerText = "🌟 Good morning, Teacher!";
+        speakText("Good morning! Welcome to class!");
+        addStar(1);
+      } else if (action === 'crayon') {
+        playChime('pop');
+        const flower = document.getElementById('flowerVisual');
+        if (flower) flower.classList.remove('grayscale');
+        document.getElementById('storyActionPrompt').innerText = "🌸 Beautiful bright flower!";
+        speakText("I will color the flower with my crayon! Beautiful!");
+        addStar(2);
+      } else if (action === 'pencil') {
+        playChime('star');
+        document.getElementById('storyActionPrompt').innerText = "✏️ Selim writes neatly with his pencil!";
+        speakText("Hello Selim! I have a new pencil!");
+        addStar(1);
+      } else if (action === 'eraser') {
+        playChime('pop');
+        const board = document.getElementById('scribbleText');
+        if (board) board.innerHTML = "<span class='text-emerald-600 font-extrabold'>✨ Squeaky Clean! 10/10 ✨</span>";
+        document.getElementById('storyActionPrompt').innerText = "🧼 All clean with the eraser!";
+        speakText("Use your eraser if you make a mistake! All clean!");
+        addStar(2);
+      }
+    }
+
+    function speakStoryText() {
+      const p = STORY_PAGES[storyCurrentPage];
+      speakText(p.dialogue);
+    }
+
+    function nextStoryPage() {
+      if (storyCurrentPage < 3) {
+        storyCurrentPage++;
+        loadStoryPage();
+      } else {
+        playChime('correct');
+        createConfetti();
+        addStar(3);
+        goToScreen('home');
+      }
+    }
+
+    function prevStoryPage() {
+      if (storyCurrentPage > 0) {
+        storyCurrentPage--;
+        loadStoryPage();
+      }
+    }
+
+    /* ===============================================================
+       GAME 6: SUPER SCHOOL QUIZ (UNIT 2 EL-MOASSER ASSESSMENT)
+       =============================================================== */
+    let quizCurrentIndex = 0;
+    let quizScore = 0;
+    let quizLocked = false;
+
+    const UNIT2_QUIZ_QUESTIONS = [
+      {
+        category: "Lesson 1: Classroom Items",
+        promptText: "Can you tap the pencil?",
+        promptAr: "أين قلم الرصاص؟ (Pencil)",
+        voiceAudio: "Listen carefully! Can you find the pencil?",
+        stageEmoji: "🎒",
+        options: [
+          { text: "Pencil", emoji: "✏️", isCorrect: true, ar: "قلم رصاص" },
+          { text: "Eraser", emoji: "🧼", isCorrect: false, ar: "ممحاة" },
+          { text: "Board", emoji: "🟩", isCorrect: false, ar: "سبورة" },
+          { text: "Chair", emoji: "🪑", isCorrect: false, ar: "كرسي" }
+        ]
+      },
+      {
+        category: "Lesson 1: Playground Fun",
+        promptText: "Which one is the slide?",
+        promptAr: "أين الزحليقة؟ (Slide)",
+        voiceAudio: "At the playground! Which one is the slide?",
+        stageEmoji: "🎪",
+        options: [
+          { text: "Desk", emoji: "🪑", isCorrect: false, ar: "مكتب" },
+          { text: "Slide", emoji: "🛝", isCorrect: true, ar: "زحليقة" },
+          { text: "Book", emoji: "📖", isCorrect: false, ar: "كتاب" },
+          { text: "Teacher", emoji: "👩‍🏫", isCorrect: false, ar: "معلمة" }
+        ]
+      },
+      {
+        category: "Lesson 2: Phonics Sound Ss",
+        promptText: "Which one starts with letter S /s/?",
+        promptAr: "أي صورة تبدأ بصوت حرف S؟",
+        voiceAudio: "Letter S says sssss! Which one starts with letter S?",
+        stageEmoji: "🔤",
+        options: [
+          { text: "Star", emoji: "⭐", isCorrect: true, ar: "نجمة (Star)" },
+          { text: "Apple", emoji: "🍎", isCorrect: false, ar: "تفاحة (A)" },
+          { text: "Nest", emoji: "🪺", isCorrect: false, ar: "عش (N)" },
+          { text: "Ant", emoji: "🐜", isCorrect: false, ar: "نملة (A)" }
+        ]
+      },
+      {
+        category: "Lesson 2: Phonics Sound Nn",
+        promptText: "Find the picture for letter N /n/!",
+        promptAr: "أي صورة تبدأ بصوت حرف N؟",
+        voiceAudio: "Letter N says nnnn! Can you find the nest?",
+        stageEmoji: "🪺",
+        options: [
+          { text: "Sun", emoji: "☀️", isCorrect: false, ar: "شمس (S)" },
+          { text: "Nest", emoji: "🪺", isCorrect: true, ar: "عش (Nest)" },
+          { text: "School", emoji: "🏫", isCorrect: false, ar: "مدرسة (S)" },
+          { text: "Apple", emoji: "🍎", isCorrect: false, ar: "تفاحة (A)" }
+        ]
+      },
+      {
+        category: "Lesson 2: Math & Counting 2",
+        promptText: "Count and find: 2 chairs!",
+        promptAr: "اختر المجموعة التي تحتوي على كرسيين (٢)!",
+        voiceAudio: "We add S for more than one! Tap the group with two chairs!",
+        stageEmoji: "🔢",
+        options: [
+          { text: "1 chair", emoji: "🪑", isCorrect: false, ar: "كرسي واحد (1)" },
+          { text: "2 chairs", emoji: "🪑 🪑", isCorrect: true, ar: "كرسيان (2 chairs)" }
+        ]
+      },
+      {
+        category: "Lesson 2: Color & Shape",
+        promptText: 'Tap the "Blue Square"!',
+        promptAr: "أين المربع الأزرق؟ (Blue Square)",
+        voiceAudio: "I can see a blue square! Can you find the blue square?",
+        stageEmoji: "🎨",
+        options: [
+          { text: "Blue Square", emoji: "🟦", isCorrect: true, ar: "مربع أزرق" },
+          { text: "Red Circle", emoji: "🔴", isCorrect: false, ar: "دائرة حمراء" },
+          { text: "Yellow Star", emoji: "⭐", isCorrect: false, ar: "نجمة صفراء" },
+          { text: "Green Circle", emoji: "🟢", isCorrect: false, ar: "دائرة خضراء" }
+        ]
+      }
+    ];
+
+    function startQuizGame() {
+      quizCurrentIndex = 0;
+      quizScore = 0;
+      quizLocked = false;
+      goToScreen('quiz');
+      document.getElementById('quizActiveArea').classList.remove('hidden');
+      document.getElementById('quizActiveArea').classList.add('flex');
+      document.getElementById('quizResultArea').classList.add('hidden');
+      document.getElementById('quizResultArea').classList.remove('flex');
+      loadQuizQuestion();
+    }
+
+    function loadQuizQuestion() {
+      quizLocked = false;
+      const q = UNIT2_QUIZ_QUESTIONS[quizCurrentIndex];
+      document.getElementById('quizQuestionIdx').innerText = (quizCurrentIndex + 1);
+      document.getElementById('quizTotalQuestions').innerText = UNIT2_QUIZ_QUESTIONS.length;
+      document.getElementById('quizCategoryBadge').innerText = q.category;
+      document.getElementById('quizQuestionPrompt').innerText = `"${q.promptText}"`;
+      document.getElementById('quizQuestionAr').innerText = q.promptAr;
+      document.getElementById('quizFeedback').innerHTML = '';
+
+      const stage = document.getElementById('quizStageVisual');
+      stage.innerHTML = `<span class="text-5xl floating-anim">${q.stageEmoji}</span>`;
+
+      const grid = document.getElementById('quizAnswersGrid');
+      grid.innerHTML = '';
+      grid.className = (q.options.length === 2) 
+        ? "grid grid-cols-1 sm:grid-cols-2 gap-4 w-full flex-1 max-w-2xl mx-auto"
+        : "grid grid-cols-2 gap-4 w-full flex-1 max-w-2xl mx-auto";
+
+      q.options.forEach((opt) => {
+        const btn = document.createElement('button');
+        btn.onclick = () => handleQuizAnswer(opt, btn);
+        btn.className = "quiz-choice-card bg-white border-4 border-amber-200 hover:border-amber-400 rounded-3xl p-4 sm:p-5 text-center shadow-md transition bounce-hover flex flex-col items-center justify-center gap-2";
+        btn.innerHTML = `
+          <span class="text-5xl sm:text-6xl my-1">${opt.emoji}</span>
+          <p class="font-extrabold text-base sm:text-lg text-slate-800 capitalize">${opt.text}</p>
+          <p class="arabic-helper text-xs text-amber-700 font-semibold" style="${showArabic ? '' : 'display:none;'}">${opt.ar}</p>
+        `;
+        grid.appendChild(btn);
+      });
+
+      setTimeout(() => {
+        speakText(q.voiceAudio);
+      }, 300);
+    }
+
+    function repeatQuizVoice() {
+      const q = UNIT2_QUIZ_QUESTIONS[quizCurrentIndex];
+      speakText(q.voiceAudio);
+    }
+
+    function handleQuizAnswer(choice, btnElement) {
+      if (quizLocked) return;
+      const feedback = document.getElementById('quizFeedback');
+
+      if (choice.isCorrect) {
+        quizLocked = true;
+        quizScore++;
+        playChime('correct');
+        btnElement.classList.remove('border-amber-200');
+        btnElement.classList.add('border-emerald-500', 'bg-emerald-50', 'scale-105');
+        feedback.innerHTML = `<span class="text-emerald-700 font-black text-xl pop-in">🌟 Excellent! "${choice.text}" 🌟</span>`;
+        speakText(`Super job! That is ${choice.text}!`);
+        addStar(2);
+
+        setTimeout(() => {
+          advanceQuizQuestion();
+        }, 1600);
+      } else {
+        playChime('tryAgain');
+        btnElement.classList.add('border-rose-400', 'bg-rose-50');
+        feedback.innerHTML = `<span class="text-rose-600 font-bold text-sm pop-in">Good try! Try once more 😊</span>`;
+        speakText("Good try! Listen again and try once more!");
+      }
+    }
+
+    function advanceQuizQuestion() {
+      quizCurrentIndex++;
+      if (quizCurrentIndex < UNIT2_QUIZ_QUESTIONS.length) {
+        loadQuizQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function finishQuiz() {
+      playChime('correct');
+      createConfetti();
+      addStar(5);
+
+      document.getElementById('quizActiveArea').classList.add('hidden');
+      document.getElementById('quizActiveArea').classList.remove('flex');
+
+      const resultArea = document.getElementById('quizResultArea');
+      resultArea.classList.remove('hidden');
+      resultArea.classList.add('flex');
+
+      document.getElementById('quizFinalScore').innerText = `${quizScore} / ${UNIT2_QUIZ_QUESTIONS.length}`;
+      document.getElementById('quizBonusStars').innerText = `+${quizScore * 2} ⭐`;
+
+      const praise = (quizScore === UNIT2_QUIZ_QUESTIONS.length)
+        ? "Perfect score! You are a brilliant Kindergarten star! ⭐"
+        : "Awesome effort! You learned so much about classroom objects and sounds!";
+      document.getElementById('quizPraiseMessage').innerText = praise;
+
+      speakText("Congratulations! You finished the Super School Quiz! High five, superstar!");
+    }
+
+    /* ===============================================================
+       GAME 7: STICKER PLAYGROUND / REWARD STAMP CANVAS
+       =============================================================== */
+    let currentSelectedSticker = '⭐';
+    const AVAILABLE_STICKERS = [
+      { emoji: '⭐', label: 'Star (S)' },
+      { emoji: '☀️', label: 'Sun (S)' },
+      { emoji: '🍎', label: 'Apple (A)' },
+      { emoji: '🐜', label: 'Ant (A)' },
+      { emoji: '🪺', label: 'Nest (N)' },
+      { emoji: '🟦', label: 'Blue Square' },
+      { emoji: '✏️', label: 'Pencil' },
+      { emoji: '📖', label: 'Book' },
+      { emoji: '🛝', label: 'Slide' },
+      { emoji: '🪵', label: 'Swing' }
+    ];
+
+    function startStickerGame() {
+      goToScreen('stickers');
+      renderStickerTray();
+    }
+
+    function renderStickerTray() {
+      const tray = document.getElementById('stickerTray');
+      tray.innerHTML = '';
+      AVAILABLE_STICKERS.forEach(st => {
+        const btn = document.createElement('button');
+        btn.onclick = () => selectSticker(st.emoji, btn);
+        const isSel = (st.emoji === currentSelectedSticker);
+        btn.className = `p-2 rounded-2xl text-2xl border-2 transition bounce-hover flex items-center justify-center shrink-0 ${isSel ? 'bg-rose-500 text-white border-rose-600 scale-110 shadow-md' : 'bg-slate-100 border-slate-200'}`;
+        btn.innerHTML = st.emoji;
+        tray.appendChild(btn);
+      });
+    }
+
+    function selectSticker(emoji, btnEl) {
+      currentSelectedSticker = emoji;
+      playChime('pop');
+      renderStickerTray();
+      speakText(emoji);
+    }
+
+    function placeSticker(e) {
+      const canvas = document.getElementById('playgroundCanvas');
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left - 24;
+      const y = e.clientY - rect.top - 24;
+
+      const sticker = document.createElement('div');
+      sticker.className = 'absolute text-4xl sm:text-5xl cursor-pointer select-none pop-in';
+      sticker.style.left = `${Math.max(10, Math.min(rect.width - 60, x))}px`;
+      sticker.style.top = `${Math.max(10, Math.min(rect.height - 60, y))}px`;
+      sticker.innerText = currentSelectedSticker;
+      
+      sticker.onclick = (event) => {
+        event.stopPropagation();
+        playChime('pop');
+        sticker.classList.add('scale-125');
+        setTimeout(() => sticker.classList.remove('scale-125'), 300);
+      };
+
+      canvas.appendChild(sticker);
+      playChime('star');
+      addStar(1);
+    }
+
+    function clearStickers() {
+      const canvas = document.getElementById('playgroundCanvas');
+      const elements = canvas.querySelectorAll('div.pop-in');
+      elements.forEach(el => el.remove());
+      playChime('pop');
+    }
+
+    window.onload = function() {
+      if ('speechSynthesis' in window) {
+        populateAmericanVoices();
+        window.speechSynthesis.onvoiceschanged = () => {
+          populateAmericanVoices();
+        };
+      }
+    };
+  </script>
+</body>
+</html>
